@@ -15,12 +15,12 @@ const data = [
 ];
 
 var canvas = document.getElementById("myCanvas");
-canvas.width = window.innerWidth; // equals window dimension
+canvas.width = window.innerWidth / 2; // equals window dimension
 canvas.height = window.innerHeight;
 var ctx = canvas.getContext("2d");
 
 const PI = Math.PI;
-const radius = 250;
+const radius = Math.min(canvas.width, canvas.height) / 2;
 const wheelX = canvas.width / 2;
 const wheelY = canvas.height / 2;
 
