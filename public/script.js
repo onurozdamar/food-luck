@@ -1,26 +1,12 @@
-const data = [
-  { title: "burger", rate: 1, red: random(), green: random(), blue: random() },
-  {
-    title: "uzun uzun kolalar",
-    rate: 2,
-    red: random(),
-    green: random(),
-    blue: random(),
-  },
-  { title: "kola", rate: 1, red: random(), green: random(), blue: random() },
-  { title: "kola", rate: 2, red: random(), green: random(), blue: random() },
-  { title: "kola", rate: 2, red: random(), green: random(), blue: random() },
-  { title: "kola", rate: 2, red: random(), green: random(), blue: random() },
-  { title: "kola", rate: 2, red: random(), green: random(), blue: random() },
-];
+const data = [];
 
 var canvas = document.getElementById("myCanvas");
-canvas.width = window.innerWidth / 2; // equals window dimension
-canvas.height = window.innerHeight;
+canvas.width = (window.innerWidth / 100) * 66; // equals window dimension
+canvas.height = (window.innerHeight / 100) * 66;
 var ctx = canvas.getContext("2d");
 
 const PI = Math.PI;
-const radius = Math.min(canvas.width, canvas.height) / 2;
+const radius = Math.min(canvas.width, canvas.height) / 2 - 40;
 const wheelX = canvas.width / 2;
 const wheelY = canvas.height / 2;
 
@@ -98,6 +84,7 @@ function animate() {
     return;
   }
   animationAngle += speed / speedStart;
+  animationAngle += Math.random();
   speed -= 3 * Math.sign(speed);
   drawWheel(speed);
   requestAnimationFrame(animate);
@@ -108,7 +95,7 @@ var lastMouseX = null;
 var lastMouseY = null;
 let speed, speedStart;
 
-document.body.addEventListener("mousemove", function (e) {
+canvas.addEventListener("mousemove", function (e) {
   if (animating) {
     return;
   }
@@ -126,7 +113,7 @@ document.body.addEventListener("mousemove", function (e) {
   var vx = Math.round((dx / dt) * 100);
   var vy = Math.round((dy / dt) * 100);
 
-  speed = Math.sqrt(vx * vx + vy * vy);
+  speed = Math.min(Math.sqrt(vx * vx + vy * vy), 700);
   speedStart = speed;
 
   timestamp = now;
@@ -134,9 +121,42 @@ document.body.addEventListener("mousemove", function (e) {
   lastMouseY = e.screenY;
 });
 
-document.body.addEventListener("mouseup", function (e) {
-  console.log(speed);
+canvas.addEventListener("mouseup", function (e) {
   animating = true;
   animate();
   drawWheel();
+});
+
+const form = document.getElementById("form");
+const addButton = document.getElementById("add");
+const table = document.getElementById("table");
+
+addButton.addEventListener("click", () => {
+  const title = document.getElementById("title");
+  const rate = document.getElementById("rate");
+
+  if (!title.value) {
+    return;
+  }
+  data.push({
+    title: title.value,
+    rate: parseInt(rate.value) || 1,
+    red: random(),
+    blue: random(),
+    green: random(),
+  });
+
+  const row = table.insertRow(data.length);
+  const titleCell = row.insertCell(0);
+  const rateCell = row.insertCell(1);
+
+  titleCell.textContent = title.value;
+  rateCell.textContent = rate.value || 1;
+
+  drawWheel();
+});
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  form.reset();
 });
