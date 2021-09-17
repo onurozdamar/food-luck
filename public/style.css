@@ -1,3 +1,32 @@
+.container {
+  display: flex;
+  flex-direction: row;
+}
 canvas {
   display: block;
+  border: 1px solid black;
+}
+form {
+  width: 67%;
+  margin-top: 10px;
+}
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+input {
+  padding: 10px;
+  margin: 10px;
+}
+table {
+  width: 100%;
+  border: 1px solid black;
+  height: 67%;
+  border-collapse: collapse;
+}
+tr,
+td,
+th {
+  border: 1px solid black;
+  padding: 3px;
 }
