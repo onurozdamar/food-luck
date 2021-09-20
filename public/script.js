@@ -1,4 +1,18 @@
-const data = [];
+const data = [
+  { title: "Tavuk", rate: 1, red: random(), green: random(), blue: random() },
+  { title: "Döner", rate: 1, red: random(), green: random(), blue: random() },
+  {
+    title: "Lahmacun",
+    rate: 1,
+    red: random(),
+    green: random(),
+    blue: random(),
+  },
+  { title: "Çıtır", rate: 1, red: random(), green: random(), blue: random() },
+  { title: "Kajun", rate: 1, red: random(), green: random(), blue: random() },
+  { title: "Tost", rate: 1, red: random(), green: random(), blue: random() },
+  { title: "Pizza", rate: 1, red: random(), green: random(), blue: random() },
+];
 
 var canvas = document.getElementById("myCanvas");
 canvas.width = (window.innerWidth / 100) * 66; // equals window dimension
@@ -89,14 +103,20 @@ function random() {
 
 drawWheel();
 
+let acc = 3;
+
 function animate() {
-  if (Math.abs(speed) <= 2) {
+  if (acc <= 0.01) {
     animating = false;
     return;
   }
-  animationAngle += speed / speedStart;
-  animationAngle += Math.random();
-  speed -= 3 * Math.sign(speed);
+  // console.log("v", speed, "a", acc, "r", speed / speedStart);
+
+  animationAngle += ((speed / 2) * PI) / speedStart;
+  animationAngle += Math.random() / (2 * PI);
+  speed -= Math.max(acc * Math.sign(speed), 0.1);
+  acc = 8 * (speed / speedStart);
+
   drawWheel(speed);
   requestAnimationFrame(animate);
 }
@@ -133,7 +153,12 @@ canvas.addEventListener("mousemove", function (e) {
 });
 
 canvas.addEventListener("mouseup", function (e) {
+  if (animating || speed < 20) {
+    return;
+  }
+  // console.log("animate");
   animating = true;
+  acc = 3;
   animate();
   drawWheel();
 });
@@ -142,7 +167,16 @@ const form = document.getElementById("form");
 const addButton = document.getElementById("add");
 const table = document.getElementById("table");
 
-addButton.addEventListener("click", () => {
+initTable();
+
+function initTable() {
+  for (let i = 0; i < data.length; i++) {
+    const element = data[i];
+    addData(element.title, element.rate, i + 1);
+  }
+}
+
+addButton.addEventListener("click", (event) => {
   const title = document.getElementById("title");
   const rate = document.getElementById("rate");
 
@@ -155,19 +189,57 @@ addButton.addEventListener("click", () => {
     red: random(),
     blue: random(),
     green: random(),
+    index: data.length,
   });
-
-  const row = table.insertRow(data.length);
-  const titleCell = row.insertCell(0);
-  const rateCell = row.insertCell(1);
-
-  titleCell.textContent = title.value;
-  rateCell.textContent = rate.value || 1;
+  addData(title.value, rate.value, data.length);
 
   drawWheel();
 });
+
+function addData(title, rate, index) {
+  // console.log(index);
+  const row = table.insertRow(index);
+  const titleCell = row.insertCell(0);
+  const rateCell = row.insertCell(1);
+  rateCell.setAttribute("class", "rate-column");
+
+  const vote = document.createElement("button");
+  vote.textContent = "Vote";
+  vote.onclick = (event) => {
+    openModal(event);
+  };
+  rateCell.appendChild(vote);
+
+  const rateTextNode = document.createTextNode(rate || 1);
+  rateCell.appendChild(rateTextNode);
+
+  const titleTextNode = document.createTextNode(title || 1);
+  titleCell.appendChild(titleTextNode);
+}
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   form.reset();
 });
+
+const vote_button = document.getElementById("vote-button");
+const modal = document.getElementById("vote-modal");
+
+vote_button.addEventListener("click", () => {
+  console.log(modal);
+  closeModal();
+});
+
+function openModal(event) {
+  modal.style.display = "flex";
+  modal.style.top = event.clientY;
+  modal.style.left = event.clientX;
+  console.log("open", event);
+}
+
+function closeModal() {
+  const range = document.getElementById("vote-range");
+
+  modal.style.display = "none";
+  console.log("close", range.value);
+}
