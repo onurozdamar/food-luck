@@ -158,7 +158,7 @@ function animate() {
   animationAngle += ((speed / 2) * PI) / speedStart;
   animationAngle += Math.random() / (2 * PI);
   speed -= Math.max(acc * Math.sign(speed), 0.1);
-  acc = 8 * (speed / speedStart);
+  acc = Math.log(speed * 10) / 10;
 
   drawWheel(speed);
   requestAnimationFrame(animate);
@@ -246,16 +246,6 @@ function addData(title, rate, index) {
   const row = table.insertRow(index + 1);
   const titleCell = row.insertCell(0);
   const rateCell = row.insertCell(1);
-  rateCell.setAttribute("class", "rate-column");
-
-  const vote = document.createElement("button");
-  vote.textContent = "Vote";
-  vote.setAttribute("id", "open-modal");
-  vote.onclick = (event) => {
-    openModal(event);
-    selectedIndex = index;
-  };
-  rateCell.appendChild(vote);
 
   const rateSpan = document.createElement("span");
   rateSpan.setAttribute("id", "rate-span-" + index);
@@ -263,8 +253,29 @@ function addData(title, rate, index) {
   rateSpan.appendChild(rateTextNode);
   rateCell.appendChild(rateSpan);
 
+  const vote = document.createElement("div");
+  vote.innerHTML = "<i class='fas fa-poll' style='font-size:20px;'></i>";
+  vote.setAttribute("class", "table-icon");
+
+  vote.setAttribute("id", "open-modal");
+  vote.onclick = (event) => {
+    openModal(event);
+    selectedIndex = index;
+  };
+  rateCell.appendChild(vote);
+
   const titleTextNode = document.createTextNode(title || 1);
   titleCell.appendChild(titleTextNode);
+
+  const deleteIcon = document.createElement("div");
+  deleteIcon.setAttribute("class", "table-icon");
+  deleteIcon.innerHTML = "<i class='fas fa-trash'></i>";
+  deleteIcon.setAttribute("id", "delete-modal");
+  deleteIcon.onclick = (event) => {
+    openModal(event);
+    selectedIndex = index;
+  };
+  titleCell.appendChild(deleteIcon);
 }
 
 form.addEventListener("submit", (e) => {
@@ -273,15 +284,20 @@ form.addEventListener("submit", (e) => {
 });
 
 const vote_button = document.getElementById("vote-button");
+const vote_cancel_button = document.getElementById("vote-cancel-button");
 const modal = document.getElementById("vote-modal");
 const modalContent = document.getElementById("vote-modal-content");
 
 vote_button.addEventListener("click", () => {
   handleVote();
 });
+vote_cancel_button.addEventListener("click", () => {
+  closeModal();
+});
 
 function openModal(event) {
   modal.style.display = "flex";
+  console.log(event.target.offsetTop);
   modalContent.style.top = event.clientY;
   modalContent.style.left = event.clientX;
 }
@@ -294,6 +310,9 @@ function handleVote() {
   const range = document.getElementById("vote-range");
   const rateCell = document.getElementById("rate-span-" + selectedIndex);
   rateCell.textContent = parseInt(rateCell.textContent) + parseInt(range.value);
+  data[selectedIndex].rate += parseInt(range.value);
+
+  drawWheel();
   closeModal();
 }
 

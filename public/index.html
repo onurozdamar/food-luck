@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Food Luck</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <script src="script.js" defer></script>
   </head>
   <body>
@@ -30,6 +34,10 @@
       </table>
       <div class="vote-modal" id="vote-modal">
         <div class="vote-modal-content" id="vote-modal-content">
+          <div>
+            <h3>Oylayın</h3>
+            <h6>Oyunuz güncel oya eklenecektir</h6>
+          </div>
           <input
             type="range"
             class="vote-range"
@@ -47,8 +55,10 @@
             <option value="4">4</option>
             <option value="5">5</option>
           </datalist>
-
-          <input type="button" value="Vote" id="vote-button" />
+          <div>
+            <input type="button" value="Vote" id="vote-button" />
+            <input type="button" value="Cancel" id="vote-cancel-button" />
+          </div>
         </div>
       </div>
     </div>
