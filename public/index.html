@@ -28,6 +28,29 @@
           <th>Rate</th>
         </tr>
       </table>
+      <div class="vote-modal" id="vote-modal">
+        <div class="vote-modal-content" id="vote-modal-content">
+          <input
+            type="range"
+            class="vote-range"
+            id="vote-range"
+            step="1"
+            min="0"
+            max="5"
+          />
+
+          <datalist id="tickmarks">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </datalist>
+
+          <input type="button" value="Vote" id="vote-button" />
+        </div>
+      </div>
     </div>
   </body>
 </html>

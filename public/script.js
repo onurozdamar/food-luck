@@ -1,17 +1,60 @@
 const data = [
-  { title: "Tavuk", rate: 1, red: random(), green: random(), blue: random() },
-  { title: "Döner", rate: 1, red: random(), green: random(), blue: random() },
+  {
+    title: "Tavuk",
+    rate: 1,
+    red: random(),
+    green: random(),
+    blue: random(),
+    index: 0,
+  },
+  {
+    title: "Döner",
+    rate: 1,
+    red: random(),
+    green: random(),
+    blue: random(),
+    index: 1,
+  },
   {
     title: "Lahmacun",
     rate: 1,
     red: random(),
     green: random(),
     blue: random(),
+    index: 2,
   },
-  { title: "Çıtır", rate: 1, red: random(), green: random(), blue: random() },
-  { title: "Kajun", rate: 1, red: random(), green: random(), blue: random() },
-  { title: "Tost", rate: 1, red: random(), green: random(), blue: random() },
-  { title: "Pizza", rate: 1, red: random(), green: random(), blue: random() },
+  {
+    title: "Çıtır",
+    rate: 1,
+    red: random(),
+    green: random(),
+    blue: random(),
+    index: 3,
+  },
+  {
+    title: "Kajun",
+    rate: 1,
+    red: random(),
+    green: random(),
+    blue: random(),
+    index: 4,
+  },
+  {
+    title: "Tost",
+    rate: 1,
+    red: random(),
+    green: random(),
+    blue: random(),
+    index: 5,
+  },
+  {
+    title: "Pizza",
+    rate: 1,
+    red: random(),
+    green: random(),
+    blue: random(),
+    index: 6,
+  },
 ];
 
 var canvas = document.getElementById("myCanvas");
@@ -172,7 +215,7 @@ initTable();
 function initTable() {
   for (let i = 0; i < data.length; i++) {
     const element = data[i];
-    addData(element.title, element.rate, i + 1);
+    addData(element.title, element.rate, i);
   }
 }
 
@@ -191,27 +234,34 @@ addButton.addEventListener("click", (event) => {
     green: random(),
     index: data.length,
   });
-  addData(title.value, rate.value, data.length);
+  addData(title.value, rate.value, data.length - 1);
 
   drawWheel();
 });
 
+let selectedIndex = 0;
+
 function addData(title, rate, index) {
   // console.log(index);
-  const row = table.insertRow(index);
+  const row = table.insertRow(index + 1);
   const titleCell = row.insertCell(0);
   const rateCell = row.insertCell(1);
   rateCell.setAttribute("class", "rate-column");
 
   const vote = document.createElement("button");
   vote.textContent = "Vote";
+  vote.setAttribute("id", "open-modal");
   vote.onclick = (event) => {
     openModal(event);
+    selectedIndex = index;
   };
   rateCell.appendChild(vote);
 
+  const rateSpan = document.createElement("span");
+  rateSpan.setAttribute("id", "rate-span-" + index);
   const rateTextNode = document.createTextNode(rate || 1);
-  rateCell.appendChild(rateTextNode);
+  rateSpan.appendChild(rateTextNode);
+  rateCell.appendChild(rateSpan);
 
   const titleTextNode = document.createTextNode(title || 1);
   titleCell.appendChild(titleTextNode);
@@ -224,22 +274,31 @@ form.addEventListener("submit", (e) => {
 
 const vote_button = document.getElementById("vote-button");
 const modal = document.getElementById("vote-modal");
+const modalContent = document.getElementById("vote-modal-content");
 
 vote_button.addEventListener("click", () => {
-  console.log(modal);
-  closeModal();
+  handleVote();
 });
 
 function openModal(event) {
   modal.style.display = "flex";
-  modal.style.top = event.clientY;
-  modal.style.left = event.clientX;
-  console.log("open", event);
+  modalContent.style.top = event.clientY;
+  modalContent.style.left = event.clientX;
 }
 
 function closeModal() {
-  const range = document.getElementById("vote-range");
-
   modal.style.display = "none";
-  console.log("close", range.value);
 }
+
+function handleVote() {
+  const range = document.getElementById("vote-range");
+  const rateCell = document.getElementById("rate-span-" + selectedIndex);
+  rateCell.textContent = parseInt(rateCell.textContent) + parseInt(range.value);
+  closeModal();
+}
+
+window.addEventListener("click", (e) => {
+  if (e.target == modal) {
+    closeModal();
+  }
+});
