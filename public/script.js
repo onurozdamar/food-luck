@@ -1,61 +1,4 @@
-const data = [
-  {
-    title: "Tavuk",
-    rate: 1,
-    red: random(),
-    green: random(),
-    blue: random(),
-    index: 0,
-  },
-  {
-    title: "Döner",
-    rate: 1,
-    red: random(),
-    green: random(),
-    blue: random(),
-    index: 1,
-  },
-  {
-    title: "Lahmacun",
-    rate: 1,
-    red: random(),
-    green: random(),
-    blue: random(),
-    index: 2,
-  },
-  {
-    title: "Çıtır",
-    rate: 1,
-    red: random(),
-    green: random(),
-    blue: random(),
-    index: 3,
-  },
-  {
-    title: "Kajun",
-    rate: 1,
-    red: random(),
-    green: random(),
-    blue: random(),
-    index: 4,
-  },
-  {
-    title: "Tost",
-    rate: 1,
-    red: random(),
-    green: random(),
-    blue: random(),
-    index: 5,
-  },
-  {
-    title: "Pizza",
-    rate: 1,
-    red: random(),
-    green: random(),
-    blue: random(),
-    index: 6,
-  },
-];
+const data = [];
 
 var canvas = document.getElementById("myCanvas");
 canvas.width = (window.innerWidth / 100) * 66; // equals window dimension
@@ -69,6 +12,8 @@ const wheelY = canvas.height / 2;
 
 let animationAngle = 1;
 let animating = false;
+
+let idCount = 0;
 
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -213,8 +158,66 @@ const table = document.getElementById("table");
 initTable();
 
 function initTable() {
-  for (let i = 0; i < data.length; i++) {
-    const element = data[i];
+  const defaultData = [
+    {
+      title: "Tavuk",
+      rate: 1,
+      red: random(),
+      green: random(),
+      blue: random(),
+      id: 0,
+    },
+    {
+      title: "Döner",
+      rate: 1,
+      red: random(),
+      green: random(),
+      blue: random(),
+      id: 1,
+    },
+    {
+      title: "Lahmacun",
+      rate: 1,
+      red: random(),
+      green: random(),
+      blue: random(),
+      id: 2,
+    },
+    {
+      title: "Çıtır",
+      rate: 1,
+      red: random(),
+      green: random(),
+      blue: random(),
+      id: 3,
+    },
+    {
+      title: "Kajun",
+      rate: 1,
+      red: random(),
+      green: random(),
+      blue: random(),
+      id: 4,
+    },
+    {
+      title: "Tost",
+      rate: 1,
+      red: random(),
+      green: random(),
+      blue: random(),
+      id: 5,
+    },
+    {
+      title: "Pizza",
+      rate: 1,
+      red: random(),
+      green: random(),
+      blue: random(),
+      id: 6,
+    },
+  ];
+  for (let i = 0; i < defaultData.length; i++) {
+    const element = defaultData[i];
     addData(element.title, element.rate, i);
   }
 }
@@ -226,29 +229,32 @@ addButton.addEventListener("click", (event) => {
   if (!title.value) {
     return;
   }
-  data.push({
-    title: title.value,
-    rate: parseInt(rate.value) || 1,
-    red: random(),
-    blue: random(),
-    green: random(),
-    index: data.length,
-  });
-  addData(title.value, rate.value, data.length - 1);
+
+  addData(title.value, rate.value, idCount);
 
   drawWheel();
 });
 
-let selectedIndex = 0;
+let selectedIndex = 0,
+  selectedRow;
 
-function addData(title, rate, index) {
+function addData(title, rate, id) {
   // console.log(index);
-  const row = table.insertRow(index + 1);
+  data.push({
+    title: title,
+    rate: parseInt(rate) || 1,
+    red: random(),
+    blue: random(),
+    green: random(),
+    id: id,
+  });
+  idCount++;
+  const row = table.insertRow(data.length);
   const titleCell = row.insertCell(0);
   const rateCell = row.insertCell(1);
 
   const rateSpan = document.createElement("span");
-  rateSpan.setAttribute("id", "rate-span-" + index);
+  rateSpan.setAttribute("id", "rate-span-" + id);
   const rateTextNode = document.createTextNode(rate || 1);
   rateSpan.appendChild(rateTextNode);
   rateCell.appendChild(rateSpan);
@@ -259,8 +265,7 @@ function addData(title, rate, index) {
 
   vote.setAttribute("id", "open-modal");
   vote.onclick = (event) => {
-    openModal(event);
-    selectedIndex = index;
+    openVoteModal(event);
   };
   rateCell.appendChild(vote);
 
@@ -270,9 +275,10 @@ function addData(title, rate, index) {
   const deleteIcon = document.createElement("div");
   deleteIcon.setAttribute("class", "table-icon");
   deleteIcon.innerHTML = "<i class='fas fa-trash'></i>";
-  deleteIcon.setAttribute("id", "delete-modal");
+  deleteIcon.setAttribute("id", "delete-icon");
   deleteIcon.onclick = (event) => {
-    openModal(event);
+    openDeleteModal(event);
+    selectedRow = row;
     selectedIndex = index;
   };
   titleCell.appendChild(deleteIcon);
@@ -285,39 +291,72 @@ form.addEventListener("submit", (e) => {
 
 const vote_button = document.getElementById("vote-button");
 const vote_cancel_button = document.getElementById("vote-cancel-button");
-const modal = document.getElementById("vote-modal");
-const modalContent = document.getElementById("vote-modal-content");
+const voteModal = document.getElementById("vote-modal");
+const voteModalContent = document.getElementById("vote-modal-content");
 
 vote_button.addEventListener("click", () => {
   handleVote();
 });
 vote_cancel_button.addEventListener("click", () => {
-  closeModal();
+  closeVoteModal();
 });
 
-function openModal(event) {
-  modal.style.display = "flex";
-  console.log(event.target.offsetTop);
-  modalContent.style.top = event.clientY;
-  modalContent.style.left = event.clientX;
+function openVoteModal(event) {
+  voteModal.style.display = "flex";
+  voteModalContent.style.top = event.clientY;
+  voteModalContent.style.left = event.clientX;
 }
 
-function closeModal() {
-  modal.style.display = "none";
+function closeVoteModal() {
+  voteModal.style.display = "none";
 }
 
 function handleVote() {
+  console.log(data, selectedIndex, data[selectedIndex]);
   const range = document.getElementById("vote-range");
   const rateCell = document.getElementById("rate-span-" + selectedIndex);
   rateCell.textContent = parseInt(rateCell.textContent) + parseInt(range.value);
   data[selectedIndex].rate += parseInt(range.value);
 
   drawWheel();
-  closeModal();
+  closeVoteModal();
+}
+
+const delete_button = document.getElementById("delete-button");
+const delete_cancel_button = document.getElementById("delete-cancel-button");
+const deleteModal = document.getElementById("delete-modal");
+const deleteModalContent = document.getElementById("delete-modal-content");
+
+delete_button.addEventListener("click", () => {
+  handleDelete();
+});
+delete_cancel_button.addEventListener("click", () => {
+  closeDeleteModal();
+});
+
+function openDeleteModal() {
+  deleteModal.style.display = "flex";
+}
+
+function closeDeleteModal() {
+  deleteModal.style.display = "none";
+}
+
+function handleDelete() {
+  data.splice(selectedIndex, 1);
+  table.childNodes[1].removeChild(selectedRow);
+
+  console.log(data, selectedIndex, selectedRow);
+
+  drawWheel();
+  closeDeleteModal();
 }
 
 window.addEventListener("click", (e) => {
-  if (e.target == modal) {
-    closeModal();
+  if (e.target == voteModal) {
+    closeVoteModal();
+  }
+  if (e.target == deleteModal) {
+    closeDeleteModal();
   }
 });
