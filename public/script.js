@@ -9,11 +9,34 @@ const PI = Math.PI;
 const radius = Math.min(canvas.width, canvas.height) / 2 - 40;
 const wheelX = canvas.width / 2;
 const wheelY = canvas.height / 2;
+let acc = 3;
 
 let animationAngle = 1;
 let animating = false;
 
+var timestamp = null;
+var lastMouseX = null;
+var lastMouseY = null;
+let speed, speedStart;
+
 let idCount = 0;
+
+const form = document.getElementById("form");
+const addButton = document.getElementById("add");
+const table = document.getElementById("table");
+
+let selectedIndex = 0,
+  selectedRow;
+
+const vote_button = document.getElementById("vote-button");
+const vote_cancel_button = document.getElementById("vote-cancel-button");
+const voteModal = document.getElementById("vote-modal");
+const voteModalContent = document.getElementById("vote-modal-content");
+
+const delete_button = document.getElementById("delete-button");
+const delete_cancel_button = document.getElementById("delete-cancel-button");
+const deleteModal = document.getElementById("delete-modal");
+const deleteModalContent = document.getElementById("delete-modal-content");
 
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -89,30 +112,24 @@ function random() {
   return Math.floor(Math.random() * 225 + 30);
 }
 
+initTable();
 drawWheel();
-
-let acc = 3;
 
 function animate() {
   if (acc <= 0.01) {
     animating = false;
     return;
   }
-  // console.log("v", speed, "a", acc, "r", speed / speedStart);
+  console.log("v", speed, "a", acc, "r", speed / speedStart);
 
   animationAngle += ((speed / 2) * PI) / speedStart;
   animationAngle += Math.random() / (2 * PI);
   speed -= Math.max(acc * Math.sign(speed), 0.1);
-  acc = Math.log(speed * 10) / 10;
+  acc = Math.log(speed * 10) / 5;
 
   drawWheel(speed);
   requestAnimationFrame(animate);
 }
-
-var timestamp = null;
-var lastMouseX = null;
-var lastMouseY = null;
-let speed, speedStart;
 
 canvas.addEventListener("mousemove", function (e) {
   if (animating) {
@@ -150,12 +167,6 @@ canvas.addEventListener("mouseup", function (e) {
   animate();
   drawWheel();
 });
-
-const form = document.getElementById("form");
-const addButton = document.getElementById("add");
-const table = document.getElementById("table");
-
-initTable();
 
 function initTable() {
   const defaultData = [
@@ -235,9 +246,6 @@ addButton.addEventListener("click", (event) => {
   drawWheel();
 });
 
-let selectedIndex = 0,
-  selectedRow;
-
 function addData(title, rate, id) {
   // console.log(index);
   data.push({
@@ -289,11 +297,6 @@ form.addEventListener("submit", (e) => {
   form.reset();
 });
 
-const vote_button = document.getElementById("vote-button");
-const vote_cancel_button = document.getElementById("vote-cancel-button");
-const voteModal = document.getElementById("vote-modal");
-const voteModalContent = document.getElementById("vote-modal-content");
-
 vote_button.addEventListener("click", () => {
   handleVote();
 });
@@ -321,11 +324,6 @@ function handleVote() {
   drawWheel();
   closeVoteModal();
 }
-
-const delete_button = document.getElementById("delete-button");
-const delete_cancel_button = document.getElementById("delete-cancel-button");
-const deleteModal = document.getElementById("delete-modal");
-const deleteModalContent = document.getElementById("delete-modal-content");
 
 delete_button.addEventListener("click", () => {
   handleDelete();
