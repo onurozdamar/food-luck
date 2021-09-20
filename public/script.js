@@ -15,10 +15,12 @@ let animating = false;
 
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let totalRate = 0;
-  data.forEach((element) => {
-    totalRate += element.rate;
-  });
+  if (data.length === 0) {
+    circle(wheelX, wheelY, radius, "rgb(151,151,151)");
+    return;
+  }
+
+  let totalRate = data.reduce((a, b) => a + b?.rate ?? 0, 0);
 
   let angle = 0;
   for (let i = 0; i < data.length; i++) {
@@ -69,6 +71,15 @@ function triangle(x1, y1, x2, y2, x3, y3) {
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
   ctx.lineTo(x3, y3);
+  ctx.fill();
+}
+
+function circle(cx, cy, radius, fillcolor) {
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.arc(cx, cy, radius, 0, 2 * PI);
+  ctx.closePath();
+  ctx.fillStyle = fillcolor;
   ctx.fill();
 }
 
