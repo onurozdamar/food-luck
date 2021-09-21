@@ -1,7 +1,7 @@
 const data = [];
 
 var canvas = document.getElementById("myCanvas");
-canvas.width = (window.innerWidth / 100) * 66; // equals window dimension
+canvas.width = (window.innerWidth / 100) * (window.innerWidth < 1000 ? 98 : 66); // equals window dimension
 canvas.height = (window.innerHeight / 100) * 66;
 var ctx = canvas.getContext("2d");
 
