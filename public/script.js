@@ -104,11 +104,6 @@ function highlightWinner() {
   ctx.closePath();
   ctx.fillStyle = "rgb(0,0,0)";
   ctx.stroke();
-
-  spawnPartices();
-  animateConfetti();
-  let audio = new Audio("./clap.mp3");
-  audio.play();
 }
 
 function slice(cx, cy, radius, startAngle, endAngle, fillcolor, text) {
@@ -156,7 +151,10 @@ drawWheel();
 function animate() {
   if (acc <= 0.01 || speed < 0) {
     animating = false;
-    highlightWinner();
+    spawnPartices();
+    animateConfetti();
+    let audio = new Audio("./clap.mp3");
+    audio.play();
     return;
   }
   // console.log("v", speed, "a", acc, "r", speed / speedStart);
@@ -427,6 +425,7 @@ spinButton.addEventListener("click", () => {
 
 function animateConfetti() {
   if (particles.length === 0) {
+    highlightWinner();
     return;
   }
   drawWheel();
