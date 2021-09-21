@@ -511,7 +511,7 @@ spinButton.addEventListener("click", () => {
   }
   // console.log("animate");
   winnerText.style.display = "none";
-  speed = 700;
+  speed = Math.random() * 300 + 600;
   speedStart = speed;
   animating = true;
   winner = null;
