@@ -73,3 +73,9 @@ datalist {
   text-align: center;
   padding: 20px;
 }
+.spin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 20px;
+}

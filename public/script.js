@@ -119,7 +119,7 @@ function animate() {
     animating = false;
     return;
   }
-  // console.log("v", speed, "a", acc, "r", speed / speedStart);
+  console.log("v", speed, "a", acc, "r", speed / speedStart);
 
   animationAngle += ((speed / 2) * PI) / speedStart;
   animationAngle += Math.random() / (2 * PI);
@@ -364,4 +364,18 @@ window.addEventListener("click", (e) => {
   if (e.target == deleteModal) {
     closeDeleteModal();
   }
+});
+
+const spinButton = document.getElementById("spin");
+spinButton.addEventListener("click", () => {
+  if (animating || speed < 20 || data.length === 0) {
+    return;
+  }
+  // console.log("animate");
+  speed = 700;
+  speedStart = speed;
+  animating = true;
+  acc = 3;
+  animate();
+  drawWheel();
 });
