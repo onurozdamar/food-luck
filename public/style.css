@@ -30,6 +30,7 @@ table {
   border: 1px solid black;
   height: 67%;
   border-collapse: collapse;
+  margin-left: 1px;
 }
 tr,
 td {
@@ -37,7 +38,7 @@ td {
   padding: 7px;
 }
 th {
-  border: 2px solid black;
+  border: 1px solid black;
   padding: 10px;
   box-sizing: border-box;
   box-shadow: inset 0px 0px 0px 1px black;
