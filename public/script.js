@@ -119,7 +119,7 @@ function animate() {
     animating = false;
     return;
   }
-  console.log("v", speed, "a", acc, "r", speed / speedStart);
+  // console.log("v", speed, "a", acc, "r", speed / speedStart);
 
   animationAngle += ((speed / 2) * PI) / speedStart;
   animationAngle += Math.random() / (2 * PI);
