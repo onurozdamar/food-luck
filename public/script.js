@@ -45,6 +45,9 @@ const createRangeButton = document.getElementById("create-range-button");
 
 const spinButton = document.getElementById("spin");
 
+const winnerSpan = document.getElementById("winner");
+const winnerText = document.getElementById("winner-text");
+
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (data.length === 0) {
@@ -101,6 +104,9 @@ function highlightWinner() {
     angle += sliceAngle;
   }
   arc(winner);
+
+  winnerSpan.textContent = winner.title;
+  winnerText.style.display = "block";
 }
 
 function slice(cx, cy, radius, startAngle, endAngle, fillcolor, text) {
@@ -220,6 +226,7 @@ canvas.addEventListener("mouseup", function (e) {
     return;
   }
   // console.log("animate");
+  winnerText.style.display = "none";
   animating = true;
   winner = null;
   acc = 3;
@@ -350,6 +357,9 @@ function addData(title, rate, id) {
     openDeleteModal();
   };
   titleCell.appendChild(deleteIcon);
+
+  winnerText.style.display = "none";
+  winner = null;
 }
 
 form.addEventListener("submit", (e) => {
@@ -446,6 +456,9 @@ function handleVote() {
   const item = data.find((i) => i.id == id);
   item.rate += totalVote;
 
+  winnerText.style.display = "none";
+  winner = null;
+
   drawWheel();
   closeVoteModal();
 }
@@ -476,6 +489,9 @@ function handleDelete() {
   data.splice(index, 1);
   table.childNodes[1].removeChild(selectedRow);
 
+  winnerText.style.display = "none";
+  winner = null;
+
   drawWheel();
   closeDeleteModal();
 }
@@ -494,6 +510,7 @@ spinButton.addEventListener("click", () => {
     return;
   }
   // console.log("animate");
+  winnerText.style.display = "none";
   speed = 700;
   speedStart = speed;
   animating = true;

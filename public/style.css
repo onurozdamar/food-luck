@@ -82,3 +82,12 @@ datalist {
 .range-container {
   margin-bottom: 15px;
 }
+.winner {
+  position: absolute;
+  display: none;
+  background-color: rgba(151, 102, 197, 0.61);
+  top: 30%;
+  font-size: 35px;
+  left: 30%;
+  transform: translate(-25%, 0);
+}
