@@ -25,8 +25,7 @@ const form = document.getElementById("form");
 const addButton = document.getElementById("add");
 const table = document.getElementById("table");
 
-let selectedIndex = 0,
-  selectedRow;
+let selectedRow;
 
 const vote_button = document.getElementById("vote-button");
 const vote_cancel_button = document.getElementById("vote-cancel-button");
@@ -116,7 +115,7 @@ initTable();
 drawWheel();
 
 function animate() {
-  if (acc <= 0.01) {
+  if (acc <= 0.01 || speed < 0) {
     animating = false;
     return;
   }
@@ -125,7 +124,7 @@ function animate() {
   animationAngle += ((speed / 2) * PI) / speedStart;
   animationAngle += Math.random() / (2 * PI);
   speed -= Math.max(acc * Math.sign(speed), 0.1);
-  acc = Math.log(speed * 10) / 5;
+  acc = (Math.exp(speed / speedStart) * Math.log(speed)) / 10;
 
   drawWheel(speed);
   requestAnimationFrame(animate);
@@ -258,6 +257,7 @@ function addData(title, rate, id) {
   });
   idCount++;
   const row = table.insertRow(data.length);
+  row.setAttribute("id", "row-" + id);
   const titleCell = row.insertCell(0);
   const rateCell = row.insertCell(1);
 
@@ -272,8 +272,9 @@ function addData(title, rate, id) {
   vote.setAttribute("class", "table-icon");
 
   vote.setAttribute("id", "open-modal");
-  vote.onclick = (event) => {
-    openVoteModal(event);
+  vote.onclick = () => {
+    openVoteModal();
+    selectedRow = row;
   };
   rateCell.appendChild(vote);
 
@@ -284,10 +285,9 @@ function addData(title, rate, id) {
   deleteIcon.setAttribute("class", "table-icon");
   deleteIcon.innerHTML = "<i class='fas fa-trash'></i>";
   deleteIcon.setAttribute("id", "delete-icon");
-  deleteIcon.onclick = (event) => {
-    openDeleteModal(event);
+  deleteIcon.onclick = () => {
+    openDeleteModal();
     selectedRow = row;
-    selectedIndex = index;
   };
   titleCell.appendChild(deleteIcon);
 }
@@ -300,14 +300,13 @@ form.addEventListener("submit", (e) => {
 vote_button.addEventListener("click", () => {
   handleVote();
 });
+
 vote_cancel_button.addEventListener("click", () => {
   closeVoteModal();
 });
 
-function openVoteModal(event) {
+function openVoteModal() {
   voteModal.style.display = "flex";
-  voteModalContent.style.top = event.clientY;
-  voteModalContent.style.left = event.clientX;
 }
 
 function closeVoteModal() {
@@ -315,11 +314,12 @@ function closeVoteModal() {
 }
 
 function handleVote() {
-  console.log(data, selectedIndex, data[selectedIndex]);
   const range = document.getElementById("vote-range");
-  const rateCell = document.getElementById("rate-span-" + selectedIndex);
+  const id = selectedRow.id.split("-")[1];
+  const rateCell = document.getElementById("rate-span-" + id);
   rateCell.textContent = parseInt(rateCell.textContent) + parseInt(range.value);
-  data[selectedIndex].rate += parseInt(range.value);
+  const item = data.find((i) => i.id == id);
+  item.rate += parseInt(range.value);
 
   drawWheel();
   closeVoteModal();
@@ -341,10 +341,11 @@ function closeDeleteModal() {
 }
 
 function handleDelete() {
-  data.splice(selectedIndex, 1);
+  const id = selectedRow.id.split("-")[1];
+  const item = data.find((i) => i.id == id);
+  const index = data.indexOf(item);
+  data.splice(index, 1);
   table.childNodes[1].removeChild(selectedRow);
-
-  console.log(data, selectedIndex, selectedRow);
 
   drawWheel();
   closeDeleteModal();
