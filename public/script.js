@@ -39,6 +39,9 @@ const deleteModalContent = document.getElementById("delete-modal-content");
 
 var particles = [];
 
+const rangeContainer = document.getElementById("range-container");
+const createRangeButton = document.getElementById("create-range-button");
+
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (data.length === 0) {
@@ -312,8 +315,8 @@ function addData(title, rate, id) {
 
   vote.setAttribute("id", "open-modal");
   vote.onclick = () => {
-    openVoteModal();
     selectedRow = row;
+    openVoteModal();
   };
   rateCell.appendChild(vote);
 
@@ -325,8 +328,8 @@ function addData(title, rate, id) {
   deleteIcon.innerHTML = "<i class='fas fa-trash'></i>";
   deleteIcon.setAttribute("id", "delete-icon");
   deleteIcon.onclick = () => {
-    openDeleteModal();
     selectedRow = row;
+    openDeleteModal();
   };
   titleCell.appendChild(deleteIcon);
 }
@@ -334,6 +337,54 @@ function addData(title, rate, id) {
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   form.reset();
+});
+
+function createRange(id) {
+  const container = document.createElement("div");
+  container.style.marginTop = 25;
+
+  const range = document.createElement("input");
+  range.setAttribute("id", "vote-range-" + id);
+  range.setAttribute("class", "vote-range");
+  range.type = "range";
+  range.min = 0;
+  range.max = 10;
+  range.value = 0;
+  range.step = 1;
+
+  container.appendChild(range);
+
+  const datalist = document.createElement("datalist");
+  for (let index = 0; index <= range.max; index++) {
+    const option = document.createElement("option");
+    option.textContent = index;
+    datalist.appendChild(option);
+  }
+
+  container.appendChild(datalist);
+
+  return container;
+}
+
+createRangeButton.addEventListener("click", () => {
+  const rangeCountInput = document.getElementById("range-count");
+
+  if (rangeCountInput.value === "") {
+    return;
+  }
+
+  while (rangeContainer.firstChild) {
+    rangeContainer.removeChild(rangeContainer.firstChild);
+  }
+
+  const rangeCount = parseInt(rangeCountInput.value);
+
+  for (let index = 0; index < rangeCount; index++) {
+    const range = createRange();
+    rangeContainer.appendChild(range);
+  }
+
+  rangeCountInput.value = "";
 });
 
 vote_button.addEventListener("click", () => {
@@ -348,6 +399,10 @@ function openVoteModal() {
   if (animating) {
     return;
   }
+  const id = selectedRow.id.split("-")[1];
+  const item = data.find((i) => i.id == id);
+  const votingTitle = document.getElementById("voting-title");
+  votingTitle.textContent = item.title;
   voteModal.style.display = "flex";
 }
 
@@ -356,12 +411,22 @@ function closeVoteModal() {
 }
 
 function handleVote() {
-  const range = document.getElementById("vote-range");
+  let totalVote = 0;
+
+  for (
+    let index = 0;
+    index < document.getElementById("range-container").childNodes.length;
+    index++
+  ) {
+    const range = rangeContainer.childNodes[index].firstChild;
+    totalVote += parseInt(range.value);
+  }
+
   const id = selectedRow.id.split("-")[1];
   const rateCell = document.getElementById("rate-span-" + id);
-  rateCell.textContent = parseInt(rateCell.textContent) + parseInt(range.value);
+  rateCell.textContent = parseInt(rateCell.textContent) + totalVote;
   const item = data.find((i) => i.id == id);
-  item.rate += parseInt(range.value);
+  item.rate += totalVote;
 
   drawWheel();
   closeVoteModal();

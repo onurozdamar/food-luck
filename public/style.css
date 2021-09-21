@@ -44,15 +44,15 @@ td {
 }
 datalist {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   margin: 0 10 0 10;
   color: black;
 }
 
 .vote-range {
   display: flex;
-  justify-content: space-between;
-  margin: 10 10 0 10;
+  width: 100%;
+  margin: 0;
   padding: 0;
 }
 .vote-modal {
@@ -78,4 +78,7 @@ datalist {
   top: 0;
   left: 0;
   margin: 20px;
+}
+.range-container {
+  margin-bottom: 15px;
 }

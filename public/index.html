@@ -37,26 +37,19 @@
       <div class="vote-modal" id="vote-modal">
         <div class="vote-modal-content" id="vote-modal-content">
           <div>
-            <h3>Oylayın</h3>
+            <h3><span id="voting-title"></span> Oylayın</h3>
             <h6>Oyunuz güncel oya eklenecektir</h6>
           </div>
-          <input
-            type="range"
-            class="vote-range"
-            id="vote-range"
-            step="1"
-            min="0"
-            max="5"
-          />
-
-          <datalist id="tickmarks">
-            <option value="0">0</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </datalist>
+          <div style="display: flex; flex-direction: row">
+            <input type="number" name="Range Count" id="range-count" />
+            <input
+              type="button"
+              value="Create Range"
+              name="Create Range"
+              id="create-range-button"
+            />
+          </div>
+          <div class="range-container" id="range-container"></div>
           <div>
             <input type="button" value="Vote" id="vote-button" />
             <input type="button" value="Cancel" id="vote-cancel-button" />
