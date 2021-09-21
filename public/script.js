@@ -119,7 +119,7 @@ function animate() {
     animating = false;
     return;
   }
-  console.log("v", speed, "a", acc, "r", speed / speedStart);
+  // console.log("v", speed, "a", acc, "r", speed / speedStart);
 
   animationAngle += ((speed / 2) * PI) / speedStart;
   animationAngle += Math.random() / (2 * PI);
@@ -157,7 +157,7 @@ canvas.addEventListener("mousemove", function (e) {
 });
 
 canvas.addEventListener("mouseup", function (e) {
-  if (animating || speed < 20) {
+  if (animating || speed < 20 || data.length === 0) {
     return;
   }
   // console.log("animate");
@@ -306,6 +306,9 @@ vote_cancel_button.addEventListener("click", () => {
 });
 
 function openVoteModal() {
+  if (animating) {
+    return;
+  }
   voteModal.style.display = "flex";
 }
 
@@ -333,6 +336,9 @@ delete_cancel_button.addEventListener("click", () => {
 });
 
 function openDeleteModal() {
+  if (animating) {
+    return;
+  }
   deleteModal.style.display = "flex";
 }
 
