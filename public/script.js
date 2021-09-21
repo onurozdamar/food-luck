@@ -37,6 +37,8 @@ const delete_cancel_button = document.getElementById("delete-cancel-button");
 const deleteModal = document.getElementById("delete-modal");
 const deleteModalContent = document.getElementById("delete-modal-content");
 
+var particles = [];
+
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (data.length === 0) {
@@ -102,6 +104,11 @@ function highlightWinner() {
   ctx.closePath();
   ctx.fillStyle = "rgb(0,0,0)";
   ctx.stroke();
+
+  spawnPartices();
+  animateConfetti();
+  let audio = new Audio("./clap.mp3");
+  audio.play();
 }
 
 function slice(cx, cy, radius, startAngle, endAngle, fillcolor, text) {
@@ -159,7 +166,8 @@ function animate() {
   speed -= Math.max(acc * Math.sign(speed), 0.1);
   acc = (Math.exp(speed / speedStart) * Math.log(speed)) / 10;
 
-  drawWheel(speed);
+  drawWheel();
+
   requestAnimationFrame(animate);
 }
 
@@ -412,3 +420,134 @@ spinButton.addEventListener("click", () => {
   animate();
   drawWheel();
 });
+/*
+  https://codepen.io/zadvorsky/pen/xzhBw
+  confetti
+*/
+
+function animateConfetti() {
+  if (particles.length === 0) {
+    return;
+  }
+  drawWheel();
+  particles.forEach(function (p) {
+    p.update();
+    if (p.complete) {
+      particles.splice(particles.indexOf(p), 1);
+    }
+  });
+
+  particles.forEach(function (p) {
+    p.draw();
+  });
+
+  requestAnimationFrame(animateConfetti);
+}
+
+function spawnPartices() {
+  for (var i = 0; i < 200; i++) {
+    var p0 = new Point(wheelX, wheelY - 64);
+    var p1 = new Point(wheelX, 0);
+    var p2 = new Point(Math.random() * canvas.width, Math.random() * wheelY);
+    var p3 = new Point(Math.random() * canvas.width, canvas.height + 64);
+
+    particles.push(new Particle(p0, p1, p2, p3));
+  }
+}
+Particle = function (p0, p1, p2, p3) {
+  this.p0 = p0;
+  this.p1 = p1;
+  this.p2 = p2;
+  this.p3 = p3;
+
+  this.time = 0;
+  this.duration = 3 + Math.random() * 2;
+  this.color = "hsl(" + Math.floor(Math.random() * 360) + ",100%,50%)";
+
+  this.w = 10;
+  this.h = 7;
+
+  this.complete = false;
+};
+Particle.prototype = {
+  update: function () {
+    this.time = Math.min(this.duration, this.time + 1 / 60);
+
+    var f = Ease.outCubic(this.time, 0, 1, this.duration);
+    var p = cubeBezier(this.p0, this.p1, this.p2, this.p3, f);
+
+    var dx = p.x - this.x;
+    var dy = p.y - this.y;
+
+    this.r = Math.atan2(dy, dx) + PI / 2;
+    this.sy = Math.sin(Math.PI * f * 10);
+    this.x = p.x;
+    this.y = p.y;
+
+    this.complete = this.time === this.duration;
+  },
+  draw: function () {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.r);
+    ctx.scale(1, this.sy);
+
+    ctx.fillStyle = this.color;
+    ctx.fillRect(-this.w * 0.5, -this.h * 0.5, this.w, this.h);
+
+    ctx.restore();
+  },
+};
+Point = function (x, y) {
+  this.x = x || 0;
+  this.y = y || 0;
+};
+/////////////////////////////
+// math
+/////////////////////////////
+/**
+ * easing equations from http://gizma.com/easing/
+ * t = current time
+ * b = start value
+ * c = delta value
+ * d = duration
+ */
+var Ease = {
+  inCubic: function (t, b, c, d) {
+    t /= d;
+    return c * t * t * t + b;
+  },
+  outCubic: function (t, b, c, d) {
+    t /= d;
+    t--;
+    return c * (t * t * t + 1) + b;
+  },
+  inOutCubic: function (t, b, c, d) {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t * t + b;
+    t -= 2;
+    return (c / 2) * (t * t * t + 2) + b;
+  },
+  inBack: function (t, b, c, d, s) {
+    s = s || 1.70158;
+    return c * (t /= d) * t * ((s + 1) * t - s) + b;
+  },
+};
+
+function cubeBezier(p0, c0, c1, p1, t) {
+  var p = new Point();
+  var nt = 1 - t;
+
+  p.x =
+    nt * nt * nt * p0.x +
+    3 * nt * nt * t * c0.x +
+    3 * nt * t * t * c1.x +
+    t * t * t * p1.x;
+  p.y =
+    nt * nt * nt * p0.y +
+    3 * nt * nt * t * c0.y +
+    3 * nt * t * t * c1.y +
+    t * t * t * p1.y;
+
+  return p;
+}
