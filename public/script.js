@@ -335,7 +335,8 @@ function addData(title, rate, id) {
   rateCell.appendChild(rateSpan);
 
   const vote = document.createElement("div");
-  vote.innerHTML = "<i class='fas fa-poll' style='font-size:20px;'></i>";
+  vote.innerHTML =
+    "<i class='fas fa-poll' style='font-size:20px; color:rgb(12,255,123)'></i>";
   vote.setAttribute("class", "table-icon");
 
   vote.setAttribute("id", "open-modal");
@@ -352,6 +353,7 @@ function addData(title, rate, id) {
   deleteIcon.setAttribute("class", "table-icon");
   deleteIcon.innerHTML = "<i class='fas fa-trash'></i>";
   deleteIcon.setAttribute("id", "delete-icon");
+  deleteIcon.style.color = "rgb(230, 48, 102)";
   deleteIcon.onclick = () => {
     selectedRow = row;
     openDeleteModal();

@@ -1,6 +1,8 @@
 .container {
   display: flex;
   flex-direction: row;
+  margin: 20px;
+  position: relative;
 }
 canvas {
   display: block;
@@ -17,6 +19,11 @@ form {
 input {
   padding: 10px;
   margin: 10px;
+  flex: 1;
+}
+input[type="button"],
+input[type="submit"] {
+  background-color: rgba(149, 204, 87, 0.61);
 }
 table {
   width: 100%;
@@ -32,6 +39,8 @@ td {
 th {
   border: 2px solid black;
   padding: 10px;
+  box-sizing: border-box;
+  box-shadow: inset 0px 0px 0px 1px black;
 }
 td {
   position: relative;
