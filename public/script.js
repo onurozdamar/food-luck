@@ -13,6 +13,7 @@ let acc = 3;
 
 let animationAngle = 1;
 let animating = false;
+let winner;
 
 var timestamp = null;
 var lastMouseX = null;
@@ -41,6 +42,8 @@ var particles = [];
 
 const rangeContainer = document.getElementById("range-container");
 const createRangeButton = document.getElementById("create-range-button");
+
+const spinButton = document.getElementById("spin");
 
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -75,13 +78,16 @@ function drawWheel() {
     wheelX + radius + 40,
     wheelY + 50
   );
+
+  if (winner) {
+    arc(winner);
+  }
 }
 
 function highlightWinner() {
   let totalRate = data.reduce((a, b) => a + b?.rate ?? 0, 0);
 
   let angle = 0;
-  let winner;
   for (let i = 0; i < data.length; i++) {
     const element = data[i];
     let sliceAngle = 2 * PI * (element.rate / totalRate);
@@ -94,19 +100,7 @@ function highlightWinner() {
     }
     angle += sliceAngle;
   }
-
-  ctx.beginPath();
-  ctx.moveTo(wheelX, wheelY);
-  ctx.arc(
-    wheelX,
-    wheelY,
-    radius,
-    winner.angle + animationAngle,
-    winner.angle + winner.sliceAngle + animationAngle
-  );
-  ctx.closePath();
-  ctx.fillStyle = "rgb(0,0,0)";
-  ctx.stroke();
+  arc(winner);
 }
 
 function slice(cx, cy, radius, startAngle, endAngle, fillcolor, text) {
@@ -144,6 +138,21 @@ function circle(cx, cy, radius, fillcolor) {
   ctx.fill();
 }
 
+function arc(winner) {
+  ctx.beginPath();
+  ctx.moveTo(wheelX, wheelY);
+  ctx.arc(
+    wheelX,
+    wheelY,
+    radius,
+    winner.angle + animationAngle,
+    winner.angle + winner.sliceAngle + animationAngle
+  );
+  ctx.closePath();
+  ctx.fillStyle = "rgb(0,0,0)";
+  ctx.stroke();
+}
+
 function random() {
   return Math.floor(Math.random() * 225 + 30);
 }
@@ -152,8 +161,9 @@ initTable();
 drawWheel();
 
 function animate() {
-  if (acc <= 0.01 || speed < 0) {
+  if (acc <= 0.0000001 || speed < 0) {
     animating = false;
+    highlightWinner();
     spawnPartices();
     animateConfetti();
     let audio = new Audio("./clap.mp3");
@@ -165,7 +175,14 @@ function animate() {
   animationAngle += ((speed / 2) * PI) / speedStart;
   animationAngle += Math.random() / (2 * PI);
   speed -= Math.max(acc * Math.sign(speed), 0.1);
-  acc = (Math.exp(speed / speedStart) * Math.log(speed)) / 10;
+  acc = Math.exp(speed / speedStart) * Math.log(speed) * (speed / speedStart);
+  // acc =
+  //   Math.exp(speed / speedStart, 2) *
+  //   Math.exp(speed / speedStart, 2) *
+  //   Math.exp(speed / speedStart, 2) *
+  //   Math.log(speed) *
+  //   Math.log(speed) *
+  //   (speed / speedStart);
 
   drawWheel();
 
@@ -204,6 +221,7 @@ canvas.addEventListener("mouseup", function (e) {
   }
   // console.log("animate");
   animating = true;
+  winner = null;
   acc = 3;
   animate();
   drawWheel();
@@ -435,6 +453,7 @@ function handleVote() {
 delete_button.addEventListener("click", () => {
   handleDelete();
 });
+
 delete_cancel_button.addEventListener("click", () => {
   closeDeleteModal();
 });
@@ -470,7 +489,6 @@ window.addEventListener("click", (e) => {
   }
 });
 
-const spinButton = document.getElementById("spin");
 spinButton.addEventListener("click", () => {
   if (animating || data.length === 0) {
     return;
@@ -479,6 +497,7 @@ spinButton.addEventListener("click", () => {
   speed = 700;
   speedStart = speed;
   animating = true;
+  winner = null;
   acc = 3;
   animate();
   drawWheel();
@@ -490,7 +509,6 @@ spinButton.addEventListener("click", () => {
 
 function animateConfetti() {
   if (particles.length === 0) {
-    highlightWinner();
     return;
   }
   drawWheel();
