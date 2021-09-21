@@ -72,6 +72,38 @@ function drawWheel() {
   );
 }
 
+function highlightWinner() {
+  let totalRate = data.reduce((a, b) => a + b?.rate ?? 0, 0);
+
+  let angle = 0;
+  let winner;
+  for (let i = 0; i < data.length; i++) {
+    const element = data[i];
+    let sliceAngle = 2 * PI * (element.rate / totalRate);
+    if (
+      ((angle + (animationAngle % (2 * PI))) % (2 * PI)) + sliceAngle >
+      2 * PI
+    ) {
+      // console.log("winner", element.title);
+      winner = { ...element, angle, sliceAngle };
+    }
+    angle += sliceAngle;
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(wheelX, wheelY);
+  ctx.arc(
+    wheelX,
+    wheelY,
+    radius,
+    winner.angle + animationAngle,
+    winner.angle + winner.sliceAngle + animationAngle
+  );
+  ctx.closePath();
+  ctx.fillStyle = "rgb(0,0,0)";
+  ctx.stroke();
+}
+
 function slice(cx, cy, radius, startAngle, endAngle, fillcolor, text) {
   if (text.length > 13) {
     text = text.substring(0, 13) + "...";
@@ -117,6 +149,7 @@ drawWheel();
 function animate() {
   if (acc <= 0.01 || speed < 0) {
     animating = false;
+    highlightWinner();
     return;
   }
   // console.log("v", speed, "a", acc, "r", speed / speedStart);
@@ -368,7 +401,7 @@ window.addEventListener("click", (e) => {
 
 const spinButton = document.getElementById("spin");
 spinButton.addEventListener("click", () => {
-  if (animating || speed < 20 || data.length === 0) {
+  if (animating || data.length === 0) {
     return;
   }
   // console.log("animate");
