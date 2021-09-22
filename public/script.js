@@ -412,7 +412,7 @@ createRangeButton.addEventListener("click", () => {
   const rangeCount = parseInt(rangeCountInput.value);
 
   for (let index = 0; index < rangeCount; index++) {
-    const range = createRange();
+    const range = createRange(index + 1);
     rangeContainer.appendChild(range);
   }
 
@@ -661,3 +661,8 @@ window.addEventListener("resize", (e) => {
   // radius = Math.min(canvas.width, canvas.height) / 2 - 40;
   drawWheel();
 });
+
+window.onload = () => {
+  const range = createRange(0);
+  rangeContainer.appendChild(range);
+};
