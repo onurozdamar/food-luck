@@ -1,12 +1,15 @@
 const data = [];
 
+const form = document.getElementById("form");
+const leftDiv = document.getElementById("left-div");
+
 var canvas = document.getElementById("myCanvas");
-canvas.width = (window.innerWidth / 100) * (window.innerWidth < 1000 ? 98 : 66); // equals window dimension
-canvas.height = (window.innerHeight / 100) * 66;
+canvas.width = form.clientWidth;
+canvas.height = window.innerHeight - form.clientHeight - 50;
 var ctx = canvas.getContext("2d");
 
 const PI = Math.PI;
-const radius = Math.min(canvas.width, canvas.height) / 2 - 40;
+let radius = Math.min(canvas.width, canvas.height) / 2 - 40;
 const wheelX = canvas.width / 2;
 const wheelY = canvas.height / 2;
 let acc = 3;
@@ -22,7 +25,6 @@ let speed, speedStart;
 
 let idCount = 0;
 
-const form = document.getElementById("form");
 const addButton = document.getElementById("add");
 const table = document.getElementById("table");
 
@@ -652,3 +654,10 @@ function cubeBezier(p0, c0, c1, p1, t) {
 
   return p;
 }
+
+window.addEventListener("resize", (e) => {
+  canvas.width = form.clientWidth;
+  canvas.height = window.innerHeight - form.clientHeight - 50;
+  // radius = Math.min(canvas.width, canvas.height) / 2 - 40;
+  drawWheel();
+});

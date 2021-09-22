@@ -30,7 +30,8 @@ table {
   border: 1px solid black;
   height: 67%;
   border-collapse: collapse;
-  margin-left: 1px;
+  margin-left: 10px;
+  flex: 1;
 }
 tr,
 td {
@@ -45,6 +46,7 @@ th {
 }
 td {
   position: relative;
+  text-overflow: ellipsis;
 }
 .table-icon {
   position: absolute;
@@ -105,5 +107,8 @@ datalist {
 @media all and (max-width: 1000px) {
   .container {
     flex-direction: column;
+  }
+  table {
+    margin-left: 0;
   }
 }
