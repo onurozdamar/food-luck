@@ -49,38 +49,63 @@
           <th>Rate</th>
         </tr>
       </table>
-      <div class="vote-modal" id="vote-modal">
-        <div class="vote-modal-content" id="vote-modal-content">
-          <div>
-            <h3><span id="voting-title"></span> Oylayın</h3>
-            <h6>Oyunuz güncel oya eklenecektir</h6>
-          </div>
-          <div style="display: flex; flex-direction: row">
-            <input type="number" name="Range Count" id="range-count" />
+    </div>
+    <div class="vote-modal" id="vote-modal">
+      <div class="vote-modal-content" id="vote-modal-content">
+        <div>
+          <h3><span id="voting-title"></span> Oylayın</h3>
+          <h6>Oyunuz güncel oya eklenecektir</h6>
+        </div>
+        <div style="display: flex; flex-direction: row">
+          <input type="number" name="Range Count" id="range-count" />
+          <input
+            type="button"
+            value="Create Range"
+            name="Create Range"
+            id="create-range-button"
+          />
+        </div>
+        <div class="range-container" id="range-container">
+          <div style="margin-top: 25px">
             <input
-              type="button"
-              value="Create Range"
-              name="Create Range"
-              id="create-range-button"
+              id="vote-range-undefined"
+              class="vote-range"
+              type="range"
+              min="0"
+              max="10"
+              step="1"
+              value="0"
             />
-          </div>
-          <div class="range-container" id="range-container"></div>
-          <div>
-            <input type="button" value="Vote" id="vote-button" />
-            <input type="button" value="Cancel" id="vote-cancel-button" />
+            <datalist>
+              <option>0</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
+              <option>6</option>
+              <option>7</option>
+              <option>8</option>
+              <option>9</option>
+              <option>10</option>
+            </datalist>
           </div>
         </div>
+        <div>
+          <input type="button" value="Vote" id="vote-button" />
+          <input type="button" value="Cancel" id="vote-cancel-button" />
+        </div>
       </div>
-      <div class="vote-modal" id="delete-modal">
-        <div class="vote-modal-content" id="delete-modal-content">
-          <div>
-            <h3>Silmek İstediğinize Emin Misiniz?</h3>
-          </div>
+    </div>
+    <div class="vote-modal" id="delete-modal">
+      <div class="vote-modal-content" id="delete-modal-content">
+        <div>
+          <h3>Silmek İstediğinize Emin Misiniz?</h3>
+        </div>
 
-          <div>
-            <input type="button" value="Delete" id="delete-button" />
-            <input type="button" value="Cancel" id="delete-cancel-button" />
-          </div>
+        <div>
+          <input type="button" value="Delete" id="delete-button" />
+          <input type="button" value="Cancel" id="delete-cancel-button" />
         </div>
       </div>
     </div>
