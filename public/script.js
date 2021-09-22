@@ -452,6 +452,7 @@ function handleVote() {
   ) {
     const range = rangeContainer.childNodes[index].firstChild;
     totalVote += parseInt(range.value);
+    range.value = 0;
   }
 
   const id = selectedRow.id.split("-")[1];
