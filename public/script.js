@@ -4,10 +4,8 @@ const form = document.getElementById("form");
 const leftDiv = document.getElementById("left-div");
 
 var canvas = document.getElementById("myCanvas");
-// canvas.width = form.clientWidth;
-// canvas.height = window.innerHeight - form.clientHeight - 50;
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = form.clientWidth;
+canvas.height = window.innerHeight - form.clientHeight - 50;
 var ctx = canvas.getContext("2d");
 
 const PI = Math.PI;
@@ -54,41 +52,41 @@ const winnerText = document.getElementById("winner-text");
 
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // if (data.length === 0) {
-  //   circle(wheelX, wheelY, radius, "rgb(151,151,151)");
-  //   return;
-  // }
+  if (data.length === 0) {
+    circle(wheelX, wheelY, radius, "rgb(151,151,151)");
+    return;
+  }
 
-  // let totalRate = data.reduce((a, b) => a + b?.rate ?? 0, 0);
+  let totalRate = data.reduce((a, b) => a + b?.rate ?? 0, 0);
 
-  // let angle = 0;
-  // for (let i = 0; i < data.length; i++) {
-  //   const element = data[i];
-  //   let sliceAngle = 2 * PI * (element.rate / totalRate);
-  //   slice(
-  //     wheelX,
-  //     wheelY,
-  //     radius,
-  //     angle + animationAngle,
-  //     angle + sliceAngle + animationAngle,
-  //     `rgb(${element.red},${element.green},${element.blue})`,
-  //     element.title
-  //   );
-  //   angle += sliceAngle;
-  // }
+  let angle = 0;
+  for (let i = 0; i < data.length; i++) {
+    const element = data[i];
+    let sliceAngle = 2 * PI * (element.rate / totalRate);
+    slice(
+      wheelX,
+      wheelY,
+      radius,
+      angle + animationAngle,
+      angle + sliceAngle + animationAngle,
+      `rgb(${element.red},${element.green},${element.blue})`,
+      element.title
+    );
+    angle += sliceAngle;
+  }
 
-  // triangle(
-  //   wheelX + radius,
-  //   wheelY,
-  //   wheelX + radius + 40,
-  //   wheelY - 50,
-  //   wheelX + radius + 40,
-  //   wheelY + 50
-  // );
+  triangle(
+    wheelX + radius,
+    wheelY,
+    wheelX + radius + 40,
+    wheelY - 50,
+    wheelX + radius + 40,
+    wheelY + 50
+  );
 
-  // if (winner) {
-  //   arc(winner);
-  // }
+  if (winner) {
+    arc(winner);
+  }
 }
 
 function highlightWinner() {
@@ -167,8 +165,8 @@ function random() {
   return Math.floor(Math.random() * 225 + 30);
 }
 
-// initTable();
-// drawWheel();
+initTable();
+drawWheel();
 
 function animate() {
   if (acc <= 0.0000001 || speed < 0) {
@@ -199,44 +197,44 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-// canvas.addEventListener("mousemove", function (e) {
-//   if (animating) {
-//     return;
-//   }
-//   if (timestamp === null) {
-//     timestamp = Date.now();
-//     lastMouseX = e.screenX;
-//     lastMouseY = e.screenY;
-//     return;
-//   }
+canvas.addEventListener("mousemove", function (e) {
+  if (animating) {
+    return;
+  }
+  if (timestamp === null) {
+    timestamp = Date.now();
+    lastMouseX = e.screenX;
+    lastMouseY = e.screenY;
+    return;
+  }
 
-//   var now = Date.now();
-//   var dt = now - timestamp;
-//   var dx = e.screenX - lastMouseX;
-//   var dy = e.screenY - lastMouseY;
-//   var vx = Math.round((dx / dt) * 100);
-//   var vy = Math.round((dy / dt) * 100);
+  var now = Date.now();
+  var dt = now - timestamp;
+  var dx = e.screenX - lastMouseX;
+  var dy = e.screenY - lastMouseY;
+  var vx = Math.round((dx / dt) * 100);
+  var vy = Math.round((dy / dt) * 100);
 
-//   speed = Math.min(Math.sqrt(vx * vx + vy * vy), 700);
-//   speedStart = speed;
+  speed = Math.min(Math.sqrt(vx * vx + vy * vy), 700);
+  speedStart = speed;
 
-//   timestamp = now;
-//   lastMouseX = e.screenX;
-//   lastMouseY = e.screenY;
-// });
+  timestamp = now;
+  lastMouseX = e.screenX;
+  lastMouseY = e.screenY;
+});
 
-// canvas.addEventListener("mouseup", function (e) {
-//   if (animating || speed < 20 || data.length === 0) {
-//     return;
-//   }
-//   // console.log("animate");
-//   winnerText.style.display = "none";
-//   animating = true;
-//   winner = null;
-//   acc = 3;
-//   animate();
-//   drawWheel();
-// });
+canvas.addEventListener("mouseup", function (e) {
+  if (animating || speed < 20 || data.length === 0) {
+    return;
+  }
+  // console.log("animate");
+  winnerText.style.display = "none";
+  animating = true;
+  winner = null;
+  acc = 3;
+  animate();
+  drawWheel();
+});
 
 function initTable() {
   const defaultData = [
@@ -303,18 +301,18 @@ function initTable() {
   }
 }
 
-// addButton.addEventListener("click", (event) => {
-//   const title = document.getElementById("title");
-//   const rate = document.getElementById("rate");
+addButton.addEventListener("click", (event) => {
+  const title = document.getElementById("title");
+  const rate = document.getElementById("rate");
 
-//   if (!title.value) {
-//     return;
-//   }
+  if (!title.value) {
+    return;
+  }
 
-//   addData(title.value, rate.value, idCount);
+  addData(title.value, rate.value, idCount);
 
-//   drawWheel();
-// });
+  drawWheel();
+});
 
 function addData(title, rate, id) {
   // console.log(index);
@@ -368,10 +366,10 @@ function addData(title, rate, id) {
   winner = null;
 }
 
-// form.addEventListener("submit", (e) => {
-//   e.preventDefault();
-//   form.reset();
-// });
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  form.reset();
+});
 
 function createRange(id) {
   const container = document.createElement("div");
@@ -400,34 +398,34 @@ function createRange(id) {
   return container;
 }
 
-// createRangeButton.addEventListener("click", () => {
-//   const rangeCountInput = document.getElementById("range-count");
+createRangeButton.addEventListener("click", () => {
+  const rangeCountInput = document.getElementById("range-count");
 
-//   if (rangeCountInput.value === "") {
-//     return;
-//   }
+  if (rangeCountInput.value === "") {
+    return;
+  }
 
-//   while (rangeContainer.firstChild) {
-//     rangeContainer.removeChild(rangeContainer.firstChild);
-//   }
+  while (rangeContainer.firstChild) {
+    rangeContainer.removeChild(rangeContainer.firstChild);
+  }
 
-//   const rangeCount = parseInt(rangeCountInput.value);
+  const rangeCount = parseInt(rangeCountInput.value);
 
-//   for (let index = 0; index < rangeCount; index++) {
-//     const range = createRange(index + 1);
-//     rangeContainer.appendChild(range);
-//   }
+  for (let index = 0; index < rangeCount; index++) {
+    const range = createRange(index + 1);
+    rangeContainer.appendChild(range);
+  }
 
-//   rangeCountInput.value = "";
-// });
+  rangeCountInput.value = "";
+});
 
-// vote_button.addEventListener("click", () => {
-//   handleVote();
-// });
+vote_button.addEventListener("click", () => {
+  handleVote();
+});
 
-// vote_cancel_button.addEventListener("click", () => {
-//   closeVoteModal();
-// });
+vote_cancel_button.addEventListener("click", () => {
+  closeVoteModal();
+});
 
 function openVoteModal() {
   if (animating) {
@@ -470,13 +468,13 @@ function handleVote() {
   closeVoteModal();
 }
 
-// delete_button.addEventListener("click", () => {
-//   handleDelete();
-// });
+delete_button.addEventListener("click", () => {
+  handleDelete();
+});
 
-// delete_cancel_button.addEventListener("click", () => {
-//   closeDeleteModal();
-// });
+delete_cancel_button.addEventListener("click", () => {
+  closeDeleteModal();
+});
 
 function openDeleteModal() {
   if (animating) {
@@ -503,40 +501,38 @@ function handleDelete() {
   closeDeleteModal();
 }
 
-// window.addEventListener("click", (e) => {
-//   if (e.target == voteModal) {
-//     closeVoteModal();
-//   }
-//   if (e.target == deleteModal) {
-//     closeDeleteModal();
-//   }
-// });
+window.addEventListener("click", (e) => {
+  if (e.target == voteModal) {
+    closeVoteModal();
+  }
+  if (e.target == deleteModal) {
+    closeDeleteModal();
+  }
+});
 
-// spinButton.addEventListener("click", () => {
-//   if (animating || data.length === 0) {
-//     return;
-//   }
-//   // console.log("animate");
-//   winnerText.style.display = "none";
-//   speed = Math.random() * 300 + 600;
-//   speedStart = speed;
-//   animating = true;
-//   winner = null;
-//   acc = 3;
-//   animate();
-//   drawWheel();
-// });
+spinButton.addEventListener("click", () => {
+  if (animating || data.length === 0) {
+    return;
+  }
+  // console.log("animate");
+  winnerText.style.display = "none";
+  speed = Math.random() * 300 + 600;
+  speedStart = speed;
+  animating = true;
+  winner = null;
+  acc = 3;
+  animate();
+  drawWheel();
+});
 /*
   https://codepen.io/zadvorsky/pen/xzhBw
   confetti
 */
 
 function animateConfetti() {
-  // if (particles.length <= particles.length / 2) {
-  //   spawnPartices();
-  //   console.log(1);
-  //   // return;
-  // }
+  if (particles.length === 0) {
+    return;
+  }
   drawWheel();
   particles.forEach(function (p) {
     p.update();
@@ -553,7 +549,7 @@ function animateConfetti() {
 }
 
 function spawnPartices() {
-  for (var i = 0; i < 300; i++) {
+  for (var i = 0; i < 200; i++) {
     var p0 = new Point(wheelX, wheelY - 64);
     var p1 = new Point(wheelX, 0);
     var p2 = new Point(Math.random() * canvas.width, Math.random() * wheelY);
@@ -660,26 +656,14 @@ function cubeBezier(p0, c0, c1, p1, t) {
   return p;
 }
 
-// window.addEventListener("resize", (e) => {
-//   canvas.width = form.clientWidth;
-//   canvas.height = window.innerHeight - form.clientHeight - 50;
-//   radius = Math.min(canvas.width, canvas.height) / 2 - 40;
-//   drawWheel();
-// });
+window.addEventListener("resize", (e) => {
+  canvas.width = form.clientWidth;
+  canvas.height = window.innerHeight - form.clientHeight - 50;
+  // radius = Math.min(canvas.width, canvas.height) / 2 - 40;
+  drawWheel();
+});
 
 window.onload = () => {
-  // const range = createRange(0);
-  // rangeContainer.appendChild(range);
-
-  spawnPartices();
-  animateConfetti();
-
-  setInterval(() => {
-    spawnPartices();
-  }, 1000);
-};
-
-window.onclick = () => {
-  let audio = new Audio("./happy-birthday.mp3");
-  audio.play();
+  const range = createRange(0);
+  rangeContainer.appendChild(range);
 };

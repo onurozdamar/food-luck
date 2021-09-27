@@ -6,16 +6,7 @@
 }
 canvas {
   display: block;
-  /* border: 1px solid black; */
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+  border: 1px solid black;
 }
 form {
   width: 100%;
@@ -119,26 +110,5 @@ datalist {
   }
   table {
     margin-left: 0;
-  }
-  .happy-birth {
-    font-size: 8vw !important;
-    text-align: center;
-  }
-}
-.happy-birth {
-  animation-name: example;
-  animation-duration: 0.5s;
-  animation-iteration-count: infinite;
-}
-
-@keyframes example {
-  0% {
-    color: red;
-  }
-  50% {
-    color: yellow;
-  }
-  100% {
-    color: red;
   }
 }
