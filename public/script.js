@@ -50,6 +50,7 @@ const spinButton = document.getElementById("spin");
 const winnerSpan = document.getElementById("winner");
 const winnerText = document.getElementById("winner-text");
 
+//#region Draw and animate
 function drawWheel() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (data.length === 0) {
@@ -57,23 +58,26 @@ function drawWheel() {
     return;
   }
 
-  let totalRate = data.reduce((a, b) => a + b?.rate ?? 0, 0);
+  let totalRate = data
+    .filter((a) => a.rate > 0)
+    .reduce((a, b) => a + b?.rate ?? 0, 0);
 
   let angle = 0;
-  for (let i = 0; i < data.length; i++) {
-    const element = data[i];
-    let sliceAngle = 2 * PI * (element.rate / totalRate);
-    slice(
-      wheelX,
-      wheelY,
-      radius,
-      angle + animationAngle,
-      angle + sliceAngle + animationAngle,
-      `rgb(${element.red},${element.green},${element.blue})`,
-      element.title
-    );
-    angle += sliceAngle;
-  }
+  data
+    .filter((a) => a.rate > 0)
+    .map((element) => {
+      let sliceAngle = 2 * PI * (element.rate / totalRate);
+      slice(
+        wheelX,
+        wheelY,
+        radius,
+        angle + animationAngle,
+        angle + sliceAngle + animationAngle,
+        `rgb(${element.red},${element.green},${element.blue})`,
+        element.title
+      );
+      angle += sliceAngle;
+    });
 
   triangle(
     wheelX + radius,
@@ -90,21 +94,28 @@ function drawWheel() {
 }
 
 function highlightWinner() {
-  let totalRate = data.reduce((a, b) => a + b?.rate ?? 0, 0);
+  let totalRate = data
+    .filter((a) => a.rate > 0)
+    .reduce((a, b) => a + b?.rate ?? 0, 0);
+
+  if (totalRate <= 0) {
+    return;
+  }
 
   let angle = 0;
-  for (let i = 0; i < data.length; i++) {
-    const element = data[i];
-    let sliceAngle = 2 * PI * (element.rate / totalRate);
-    if (
-      ((angle + (animationAngle % (2 * PI))) % (2 * PI)) + sliceAngle >
-      2 * PI
-    ) {
-      // console.log("winner", element.title);
-      winner = { ...element, angle, sliceAngle };
-    }
-    angle += sliceAngle;
-  }
+  data
+    .filter((a) => a.rate > 0)
+    .map((element) => {
+      let sliceAngle = 2 * PI * (element.rate / totalRate);
+      if (
+        ((angle + (animationAngle % (2 * PI))) % (2 * PI)) + sliceAngle >
+        2 * PI
+      ) {
+        // console.log("winner", element.title);
+        winner = { ...element, angle, sliceAngle };
+      }
+      angle += sliceAngle;
+    });
   arc(winner);
 
   winnerSpan.textContent = winner.title;
@@ -224,7 +235,7 @@ canvas.addEventListener("mousemove", function (e) {
 });
 
 canvas.addEventListener("mouseup", function (e) {
-  if (animating || speed < 20 || data.length === 0) {
+  if (animating || speed < 20 || data.filter((a) => a.rate > 0).length === 0) {
     return;
   }
   // console.log("animate");
@@ -301,6 +312,23 @@ function initTable() {
   }
 }
 
+spinButton.addEventListener("click", () => {
+  if (animating || data.filter((a) => a.rate > 0).length === 0) {
+    return;
+  }
+  // console.log("animate");
+  winnerText.style.display = "none";
+  speed = Math.random() * 300 + 600;
+  speedStart = speed;
+  animating = true;
+  winner = null;
+  acc = 3;
+  animate();
+  drawWheel();
+});
+//#endregion
+
+//#region Add new food
 addButton.addEventListener("click", (event) => {
   const title = document.getElementById("title");
   const rate = document.getElementById("rate");
@@ -370,7 +398,9 @@ form.addEventListener("submit", (e) => {
   e.preventDefault();
   form.reset();
 });
+//#endregion
 
+//#region Vote and Delete modal
 function createRange(id) {
   const container = document.createElement("div");
   container.style.marginTop = 25;
@@ -379,7 +409,7 @@ function createRange(id) {
   range.setAttribute("id", "vote-range-" + id);
   range.setAttribute("class", "vote-range");
   range.type = "range";
-  range.min = 0;
+  range.min = -5;
   range.max = 10;
   range.value = 0;
   range.step = 1;
@@ -387,11 +417,28 @@ function createRange(id) {
   container.appendChild(range);
 
   const datalist = document.createElement("datalist");
-  for (let index = 0; index <= range.max; index++) {
+  datalist.setAttribute("class", "range-datalist");
+  for (let index = range.min; index <= range.max; index++) {
     const option = document.createElement("option");
     option.textContent = index;
     datalist.appendChild(option);
   }
+
+  datalist.childNodes[5].style.color = "rgb(230, 48, 102)";
+  datalist.childNodes[5].style.fontWeight = "600";
+  datalist.childNodes[5].style.fontSize = "18px";
+
+  range.addEventListener("input", (val) => {
+    datalist.childNodes.forEach((opt) => {
+      opt.style.fontWeight = "normal";
+      opt.style.color = "black";
+      opt.style.fontSize = "16px";
+    });
+    datalist.childNodes[+val.target.value + 5].style.color =
+      "rgb(230, 48, 102)";
+    datalist.childNodes[+val.target.value + 5].style.fontWeight = "600";
+    datalist.childNodes[+val.target.value + 5].style.fontSize = "18px";
+  });
 
   container.appendChild(datalist);
 
@@ -436,6 +483,19 @@ function openVoteModal() {
   const votingTitle = document.getElementById("voting-title");
   votingTitle.textContent = item.title;
   voteModal.style.display = "flex";
+
+  const datalists = document.getElementsByClassName("range-datalist");
+  for (let index = 0; index < datalists.length; index++) {
+    const datalist = datalists[index];
+    datalist.childNodes.forEach((opt) => {
+      opt.style.fontWeight = "normal";
+      opt.style.color = "black";
+      opt.style.fontSize = "16px";
+    });
+    datalist.childNodes[5].style.color = "rgb(230, 48, 102)";
+    datalist.childNodes[5].style.fontWeight = "600";
+    datalist.childNodes[5].style.fontSize = "18px";
+  }
 }
 
 function closeVoteModal() {
@@ -509,21 +569,9 @@ window.addEventListener("click", (e) => {
     closeDeleteModal();
   }
 });
+//#endregion
 
-spinButton.addEventListener("click", () => {
-  if (animating || data.length === 0) {
-    return;
-  }
-  // console.log("animate");
-  winnerText.style.display = "none";
-  speed = Math.random() * 300 + 600;
-  speedStart = speed;
-  animating = true;
-  winner = null;
-  acc = 3;
-  animate();
-  drawWheel();
-});
+//#region Confetti
 /*
   https://codepen.io/zadvorsky/pen/xzhBw
   confetti
@@ -655,6 +703,7 @@ function cubeBezier(p0, c0, c1, p1, t) {
 
   return p;
 }
+//#endregion
 
 window.addEventListener("resize", (e) => {
   canvas.width = form.clientWidth;
