@@ -57,8 +57,12 @@ td {
 datalist {
   display: flex;
   justify-content: space-between;
-  margin: 0 10 0 10;
+  /* margin: 0 10 0 10; */
   color: black;
+  user-select: none;
+}
+datalist option {
+  width: 10px;
 }
 
 .vote-range {
