@@ -105,11 +105,12 @@ function highlightWinner() {
   let angle = 0;
   data
     .filter((a) => a.rate > 0)
-    .map((element) => {
+    .map((element, index) => {
       let sliceAngle = 2 * PI * (element.rate / totalRate);
       if (
-        ((angle + (animationAngle % (2 * PI))) % (2 * PI)) + sliceAngle >
-        2 * PI
+        angle <
+        (animationAngle + 2 * PI) % (2 * PI) <
+        sliceAngle * (index + 1)
       ) {
         // console.log("winner", element.title);
         winner = { ...element, angle, sliceAngle };
@@ -180,7 +181,7 @@ initTable();
 drawWheel();
 
 function animate() {
-  if (acc <= 0.0000001 || speed < 0) {
+  if (acc <= 0.00000001 || speed < 0) {
     animating = false;
     highlightWinner();
     spawnPartices();
@@ -189,19 +190,11 @@ function animate() {
     audio.play();
     return;
   }
-  // console.log("v", speed, "a", acc, "r", speed / speedStart);
+  // console.log("v", speed, "a", acc, "an", animationAngle);
 
-  animationAngle += ((speed / 2) * PI) / speedStart;
-  animationAngle += Math.random() / (2 * PI);
-  speed -= Math.max(acc * Math.sign(speed), 0.1);
-  acc = Math.exp(speed / speedStart) * Math.log(speed) * (speed / speedStart);
-  // acc =
-  //   Math.exp(speed / speedStart, 2) *
-  //   Math.exp(speed / speedStart, 2) *
-  //   Math.exp(speed / speedStart, 2) *
-  //   Math.log(speed) *
-  //   Math.log(speed) *
-  //   (speed / speedStart);
+  speed -= acc;
+  acc -= 0.005;
+  animationAngle = speed / (3.5 * PI);
 
   drawWheel();
 
@@ -242,7 +235,7 @@ canvas.addEventListener("mouseup", function (e) {
   winnerText.style.display = "none";
   animating = true;
   winner = null;
-  acc = 3;
+  acc = 2.6;
   animate();
   drawWheel();
 });
@@ -322,7 +315,7 @@ spinButton.addEventListener("click", () => {
   speedStart = speed;
   animating = true;
   winner = null;
-  acc = 3;
+  acc = 2.6;
   animate();
   drawWheel();
 });
