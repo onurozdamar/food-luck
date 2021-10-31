@@ -62,22 +62,27 @@ function drawWheel() {
     .filter((a) => a.rate > 0)
     .reduce((a, b) => a + b?.rate ?? 0, 0);
 
+  ctx.save();
+  ctx.translate(wheelX, wheelY);
+  ctx.rotate(animationAngle * (PI / 180));
+
   let angle = 0;
   data
     .filter((a) => a.rate > 0)
     .map((element) => {
       let sliceAngle = 2 * PI * (element.rate / totalRate);
       slice(
-        wheelX,
-        wheelY,
+        0,
+        0,
         radius,
-        angle + animationAngle,
-        angle + sliceAngle + animationAngle,
+        angle,
+        angle + sliceAngle,
         `rgb(${element.red},${element.green},${element.blue})`,
         element.title
       );
       angle += sliceAngle;
     });
+  ctx.restore();
 
   triangle(
     wheelX + radius,
@@ -107,10 +112,16 @@ function highlightWinner() {
     .filter((a) => a.rate > 0)
     .map((element, index) => {
       let sliceAngle = 2 * PI * (element.rate / totalRate);
+      // console.log({
+      //   a: angle,
+      //   sa: sliceAngle * (index + 1),
+      //   an: animationAngle,
+      //   anm: animationAngle % (2 * PI),
+      //   e: element.title,
+      // });
       if (
-        angle <
-        (animationAngle + 2 * PI) % (2 * PI) <
-        sliceAngle * (index + 1)
+        angle < (animationAngle + 2 * PI) % (2 * PI) &&
+        (animationAngle + 2 * PI) % (2 * PI) < sliceAngle * (index + 1)
       ) {
         // console.log("winner", element.title);
         winner = { ...element, angle, sliceAngle };
@@ -133,12 +144,13 @@ function slice(cx, cy, radius, startAngle, endAngle, fillcolor, text) {
   ctx.closePath();
   ctx.fillStyle = fillcolor;
   ctx.fill();
+  ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate((startAngle + endAngle) / 2);
   ctx.fillStyle = "black";
   ctx.font = "30px Comic Sans MS";
   ctx.fillText(text, Math.max(radius - text.length * 20, 35), 10);
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.restore();
 }
 
 function triangle(x1, y1, x2, y2, x3, y3) {
@@ -159,6 +171,9 @@ function circle(cx, cy, radius, fillcolor) {
 }
 
 function arc(winner) {
+  if (!winner) {
+    return;
+  }
   ctx.beginPath();
   ctx.moveTo(wheelX, wheelY);
   ctx.arc(
@@ -183,7 +198,8 @@ drawWheel();
 function animate() {
   if (acc <= 0.00000001 || speed < 0) {
     animating = false;
-    highlightWinner();
+    // TODO cant find  winner properly
+    //highlightWinner();
     spawnPartices();
     animateConfetti();
     let audio = new Audio("./clap.mp3");
@@ -194,7 +210,7 @@ function animate() {
 
   speed -= acc;
   acc -= 0.005;
-  animationAngle = speed / (3.5 * PI);
+  animationAngle += speed * (PI / 180);
 
   drawWheel();
 
@@ -314,6 +330,7 @@ spinButton.addEventListener("click", () => {
   speed = Math.random() * 300 + 600;
   speedStart = speed;
   animating = true;
+  animationAngle = 0;
   winner = null;
   acc = 2.6;
   animate();
