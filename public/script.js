@@ -375,8 +375,7 @@ function addData(title, rate, id) {
   rateCell.appendChild(rateSpan);
 
   const vote = document.createElement("div");
-  vote.innerHTML =
-    "<i class='fas fa-poll' style='font-size:20px; color:rgb(12,255,123)'></i>";
+  vote.innerHTML = "<i class='fas fa-poll' style='color:rgb(12,255,123)'></i>";
   vote.setAttribute("class", "table-icon");
 
   vote.setAttribute("id", "open-modal");

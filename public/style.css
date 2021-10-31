@@ -32,11 +32,12 @@ table {
   border-collapse: collapse;
   margin-left: 10px;
   flex: 1;
+  font-size: 16px;
 }
 tr,
 td {
   border: 1px solid black;
-  padding: 7px;
+  padding: 12px;
 }
 th {
   border: 1px solid black;
@@ -53,6 +54,7 @@ td {
   top: 0;
   right: 0;
   margin: 10px;
+  font-size: 24px;
 }
 datalist {
   display: flex;
