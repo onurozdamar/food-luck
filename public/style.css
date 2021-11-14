@@ -75,7 +75,7 @@ datalist option {
 }
 .vote-modal {
   display: none;
-  position: absolute;
+  position: fixed;
   background-color: rgba(151, 102, 197, 0.288);
   top: 0;
   bottom: 0;
